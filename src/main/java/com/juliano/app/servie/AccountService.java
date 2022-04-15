@@ -1,6 +1,7 @@
 package com.juliano.app.servie;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.juliano.app.Models.Account;
@@ -25,7 +26,9 @@ public class AccountService {
 		return accr.save(acc);
 	}
 	
-	public Account getAcc(Long id) {
-		return accr.getById(id);
+	public ResponseEntity<Account> getAcc(Long id) {
+		return accr.findById(id)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 }
