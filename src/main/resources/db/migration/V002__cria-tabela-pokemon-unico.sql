@@ -1,6 +1,7 @@
 create table pokemon_unico(
 	id bigint not null auto_increment,
 	id_pokemon bigint not null,
+	personagem_id bigint not null,
     apelido varchar(50) not null,
     tipo varchar(100) not null,
    	nivel int not null,
@@ -26,9 +27,9 @@ create table pokemon_unico(
    	crias varchar(256),
    	genero varchar(10) not null,
 	vivo  bool not null,
+	hp_atual int,
+	stamina int,
+	
 	
     primary key (id)
 );
-
-alter table pokemon_unico add constraint fk_id_pokemon_unico
-foreign key (id_pokemon) references pokemon (id);
