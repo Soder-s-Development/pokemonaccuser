@@ -3,6 +3,7 @@ create table pokemon_unico(
 	id_pokemon bigint not null,
 	personagem_id bigint not null,
     apelido varchar(50) not null,
+    nome_pokemon varchar(50) not null,
     tipo varchar(100) not null,
    	nivel int not null,
    	novo_atk int,
@@ -29,6 +30,8 @@ create table pokemon_unico(
 	vivo  bool not null,
 	hp_atual int,
 	stamina int,
+	stamina_atual int,
+	evoluvao_estado smallint,
 	
 	
     primary key (id)

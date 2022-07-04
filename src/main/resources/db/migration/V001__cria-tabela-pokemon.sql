@@ -8,6 +8,7 @@ create table pokemon(
     spe int not null,
     hp int not null,
     tipo varchar(50),
+    estado smallint,
     
     primary key (id)
 );
