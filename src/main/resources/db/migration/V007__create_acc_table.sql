@@ -6,5 +6,6 @@ create table account(
 	coin int,
 	password varchar(256) not null,
 	age int,
-	email varchar(256) not null
+	email varchar(256) not null,
+	actived varchar(6) not null
 );

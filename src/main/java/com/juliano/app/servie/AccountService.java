@@ -1,5 +1,7 @@
 package com.juliano.app.servie;
 
+import com.juliano.app.Models.AccountValidation;
+import com.juliano.app.repository.AccountValidationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,29 @@ public class AccountService {
 	
 	@Autowired
 	private PersonagemRepository pr;
-	
+
+	@Autowired
+	private AccountValidationRepository acr;
 	
 	public Account newAcc(Account acc) {
 		acc.setPassword(passu.generateSecurePassword(acc.getPassword(), "mypokemongame"));
-		return accr.save(acc);
+		Account a = accr.save(acc);
+		if(a == null){
+			return null;
+		}
+		int cod = GerarCod.getRandonInt(9999);
+		String s = "**Código de verificaçao: "+cod+" **";
+		JavaMailApp mail = new JavaMailApp();
+		Boolean b = mail.sendEmail(acc.getEmail(), s);
+
+		if(b==true){
+			AccountValidation accv = new AccountValidation();
+			accv.setEmail(a.getEmail());
+			accv.setCode(cod);
+			accv.setAcc_id(a.getId());
+			acr.save(accv);
+		}
+		return a;
 	}
 	
 	public ResponseEntity<Account> getAcc(Long id) {
