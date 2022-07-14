@@ -27,7 +27,7 @@ public class JavaMailApp
                     protected PasswordAuthentication getPasswordAuthentication()
                     {
                         return new PasswordAuthentication("julianosoder1989@gmail.com",
-                                "ttgteowtuujhhniq");
+                                "senha");
                     }
                 });
 

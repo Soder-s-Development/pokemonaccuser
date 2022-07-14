@@ -32,6 +32,8 @@ public class AccountService {
 	
 	public Account newAcc(Account acc) {
 		acc.setPassword(passu.generateSecurePassword(acc.getPassword(), "mypokemongame"));
+		acc.setCoin(0);
+		acc.setSucoin(0);
 		Account a = accr.save(acc);
 		if(a == null){
 			return null;
@@ -64,5 +66,16 @@ public class AccountService {
 		p.setHold_ids("");
 		p.setPkmu_ids("");
 		return pr.save(p);
+	}
+
+	public Boolean validarEmail(int cod){
+		AccountValidation a = acr.findByCode(cod);
+		if(a != null){
+			Account ac = accr.findByEmail(a.getEmail());
+			ac.setActived(true);
+			accr.save(ac);
+			return true;
+		}
+		return false;
 	}
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountValidationRepository extends JpaRepository<AccountValidation, Long> {
+    AccountValidation findByCode(int code);
 }

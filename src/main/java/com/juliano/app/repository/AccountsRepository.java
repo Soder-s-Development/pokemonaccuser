@@ -7,5 +7,5 @@ import com.juliano.app.Models.Account;
 
 @Repository
 public interface AccountsRepository extends JpaRepository<Account, Long>{
-
+    Account findByEmail(String s);
 }
