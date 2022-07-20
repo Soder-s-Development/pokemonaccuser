@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/account")
-@CrossOrigin(origins = {"http://localhost", "http://127.0.0.1", "http://0.0.0.0", "x-requested-with", "content-type"}, originPatterns = "*")
+@CrossOrigin(origins = {"*", "x-requested-with", "content-type"}, originPatterns = "*")
 public class AccountsController {
 
 	@Autowired
@@ -38,6 +38,10 @@ public class AccountsController {
 	@PostMapping("/{id}/{nome}")
 	public Personagem criarPersonagem(@PathVariable String nome, @PathVariable Long id){
 		return accs.criarPersonagem(id, nome);
+	}
+	@PostMapping("/validate/{code}")
+	public Boolean activeAcc(@PathVariable int code){
+		return  accs.validarEmail(code);
 	}
 	
 }
