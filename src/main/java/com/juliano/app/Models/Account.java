@@ -42,4 +42,6 @@ public class Account {
 	@NotNull
 	@Column(name = "actived")
 	private boolean actived = false;
+
+	private int level = 1;
 }
