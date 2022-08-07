@@ -78,4 +78,35 @@ public class AccountService {
 		}
 		return false;
 	}
+
+	public int subirDeNivel(Long id) {
+		Account a = this.buscarConta(id);
+		if(!checkNull(a)) return -1;
+		a.setLevel(a.getLevel()+1);
+		accr.save(a);
+		return a.getLevel();
+	}
+	public Account buscarConta(Long id){
+		return accr.findById(id).map(account ->  account).orElse(null);
+	}
+	public ResponseEntity<Integer> salvarExperiencia(Long id, int quantidade){
+		Account a = this.buscarConta(id);
+		if(checkNull(a)){
+			ResponseEntity.notFound().build();
+		}
+		a.setExperience(quantidade);
+		Double calc = Double.valueOf(a.getExperience()/(a.getLevel()*100));
+		if(calc>1){
+			subirDeNivel(id);
+		}
+		accr.save(a);
+		return ResponseEntity.ok(a.getLevel());
+	}
+
+	private boolean checkNull(Account a) {
+		if( a == null){
+			return true;
+		}
+		return false;
+	}
 }

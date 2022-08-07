@@ -44,4 +44,6 @@ public class Account {
 	private boolean actived = false;
 
 	private int level = 1;
+
+	private int experience = 1;
 }

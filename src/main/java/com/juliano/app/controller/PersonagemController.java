@@ -1,13 +1,9 @@
 package com.juliano.app.controller;
 
+import com.juliano.app.servie.PersonagemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.juliano.app.Models.Personagem;
 import com.juliano.app.repository.PersonagemRepository;
@@ -22,6 +18,8 @@ public class PersonagemController {
 
 	@Autowired
 	private PersonagemRepository psnr;
+
+	private PersonagemService psns;
 	
 	@PostMapping
 	public Personagem createPersonagem(@RequestBody Personagem np) {
@@ -30,5 +28,10 @@ public class PersonagemController {
 	@GetMapping("/{id}")
 	public Personagem getPersonagem(@PathVariable Long id) {
 		return psnr.findById(id).orElse(null);
+	}
+
+	@PatchMapping("/experience/{id}/{quantidade}")
+	public ResponseEntity<Personagem> setExperience(@PathVariable Long id, @PathVariable int quantidade){
+		return psns.setNewExperience(id, quantidade);
 	}
 }

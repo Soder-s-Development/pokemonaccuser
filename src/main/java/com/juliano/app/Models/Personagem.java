@@ -29,4 +29,5 @@ public class Personagem {
 	private String pkmu_ids;
 	private String hold_ids;
 	private int level = 1;
+	private int experience = 1;
 }
