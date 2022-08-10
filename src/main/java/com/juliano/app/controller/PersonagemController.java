@@ -19,6 +19,7 @@ public class PersonagemController {
 	@Autowired
 	private PersonagemRepository psnr;
 
+	@Autowired
 	private PersonagemService psns;
 	
 	@PostMapping
