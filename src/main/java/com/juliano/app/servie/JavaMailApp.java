@@ -1,5 +1,6 @@
 package com.juliano.app.servie;
 
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.Address;
 import javax.mail.Message;
@@ -13,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 public class JavaMailApp
 {
     public Boolean sendEmail(String clienteEmail, String messageBody) {
+       if(clienteEmail.isBlank()) return false;
         Properties props = new Properties();
         /** Parâmetros de conexão com servidor Gmail */
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -27,7 +29,7 @@ public class JavaMailApp
                     protected PasswordAuthentication getPasswordAuthentication()
                     {
                         return new PasswordAuthentication("julianosoder1989@gmail.com",
-                                "senha");
+                                "czznixrkobsknwfh");
                     }
                 });
 
@@ -37,7 +39,12 @@ public class JavaMailApp
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("seuemail@gmail.com"));
+            //set message headers
+            message.addHeader("Content-type", "text/HTML; charset=UTF-8");
+            message.addHeader("format", "flowed");
+            message.addHeader("Content-Transfer-Encoding", "8bit");
+            message.setFrom(new InternetAddress("julianosoder1989@gmail.com"));
+            message.setSentDate(new Date());
             //Remetente
 
             Address[] toUser = InternetAddress //Destinatário(s) deve vir por variável
