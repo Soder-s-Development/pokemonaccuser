@@ -1,6 +1,5 @@
 package com.juliano.app.config;
 
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
@@ -8,17 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class Midleware {
-    private final static String token = "pokemonWorldJulianoSoder";
+    private final static String token = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
 
     public boolean tokenRequest(ServletRequest servletRequest){
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String authorization = req.getHeader("Authorization");
-        String auth = null;
-        if (authorization.split("").length > 7){
-            auth = authorization.split("bearer ")[1];
-        }
-        boolean equals = auth.equals(token);
-        return equals;
+        return validateToken(authorization);
+    }
+    public boolean validateToken(String bearer){
+        return bearer.split("Bearer ").length > 1 && token.equals(bearer.split("Bearer ")[1]);
     }
     public String getToken(){
         return token;

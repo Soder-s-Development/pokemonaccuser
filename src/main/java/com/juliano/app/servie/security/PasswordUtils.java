@@ -1,4 +1,4 @@
-package com.juliano.app.security;
+package com.juliano.app.servie.security;
 
 import java.beans.JavaBean;
 import java.security.NoSuchAlgorithmException;

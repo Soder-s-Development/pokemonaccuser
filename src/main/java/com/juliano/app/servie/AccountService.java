@@ -10,7 +10,7 @@ import com.juliano.app.Models.Account;
 import com.juliano.app.Models.Personagem;
 import com.juliano.app.repository.AccountsRepository;
 import com.juliano.app.repository.PersonagemRepository;
-import com.juliano.app.security.PasswordUtils;
+import com.juliano.app.servie.security.PasswordUtils;
 
 import lombok.AllArgsConstructor;
 
@@ -31,6 +31,9 @@ public class AccountService {
 	private AccountValidationRepository acr;
 	
 	public Account newAcc(Account acc) {
+		if(accr.findByEmail(acc.getEmail()) != null){
+			accr.deleteById(accr.findByEmail(acc.getEmail()).getId());
+		}
 		acc.setPassword(passu.generateSecurePassword(acc.getPassword(), "mypokemongame"));
 		acc.setCoin(0);
 		acc.setSucoin(0);
@@ -68,15 +71,16 @@ public class AccountService {
 		return pr.save(p);
 	}
 
-	public Boolean validarEmail(int cod){
+	public ResponseEntity<Boolean> validarEmail(int cod){
 		AccountValidation a = acr.findByCode(cod);
 		if(a != null){
 			Account ac = accr.findByEmail(a.getEmail());
 			ac.setActived(true);
 			accr.save(ac);
-			return true;
+			acr.delete(a);
+			return ResponseEntity.ok().body(true);
 		}
-		return false;
+		return ResponseEntity.ok().body(false);
 	}
 
 	public int subirDeNivel(Long id) {
