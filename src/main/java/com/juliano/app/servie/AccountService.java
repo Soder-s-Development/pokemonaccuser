@@ -37,6 +37,8 @@ public class AccountService {
 		acc.setPassword(passu.generateSecurePassword(acc.getPassword(), "mypokemongame"));
 		acc.setCoin(0);
 		acc.setSucoin(0);
+		acc.setLevel(1);
+		acc.setActived(false);
 		Account a = accr.save(acc);
 		if(a == null){
 			return null;
