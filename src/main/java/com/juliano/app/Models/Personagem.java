@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

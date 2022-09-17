@@ -15,7 +15,8 @@ public class Midleware {
         return validateToken(authorization);
     }
     public boolean validateToken(String bearer){
-        return bearer.split("Bearer ").length > 1 && token.equals(bearer.split("Bearer ")[1]);
+    	//aqui cabe uma validacao detalhhada
+    	return bearer.split("Bearer ").length > 1 && token.equals(bearer.split("Bearer ")[1]);
     }
     public String getToken(){
         return token;
