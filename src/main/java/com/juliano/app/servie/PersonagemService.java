@@ -1,19 +1,16 @@
 package com.juliano.app.servie;
 
-import com.juliano.app.Models.Account;
-import com.juliano.app.Models.Personagem;
-import com.juliano.app.config.CustomErrorHandler;
-import com.juliano.app.config.RespostaPadrao;
-import com.juliano.app.repository.PersonagemRepository;
-import lombok.NonNull;
-import lombok.var;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.juliano.app.Models.Account;
+import com.juliano.app.Models.Personagem;
+import com.juliano.app.config.CustomErrorHandler;
+import com.juliano.app.repository.PersonagemRepository;
 
 @Service
 public class PersonagemService {
