@@ -19,24 +19,7 @@ public class PersonagemService {
     @Autowired
     AccountService accs;
 
-    public ResponseEntity<Personagem> setNewExperience(Long id, int ammount){
-        Optional<Personagem> p = pr.findById(id);
-        if(!p.isPresent()){
-            ResponseEntity.notFound().build();
-        }
-        Personagem psng = p.get();
-        psng.setExperience(ammount);
-        Double calc = Double.valueOf(psng.getExperience()/(psng.getLevel()*100));
-        if(calc>1){
-            psng.setLevel(psng.getLevel()+1);
-        }
-        pr.save(psng);
-        accs.salvarExperiencia(psng.getId_conta(), ammount);
-        return ResponseEntity.ok(psng);
-    }
     public ResponseEntity<Object> saveNewPersonagem(Personagem p) {
-    	p.setExperience(0);
-    	p.setLevel(1);
     	ResponseEntity<Account> responseACC = accs.getAcc(p.getId_conta());
     	if(!(responseACC.getStatusCode() == HttpStatus.OK)) {
     		return ResponseEntity.status(422).body(new CustomErrorHandler().contaNaoExistente(p));

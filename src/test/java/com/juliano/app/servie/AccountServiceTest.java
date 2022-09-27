@@ -5,6 +5,7 @@ import com.juliano.app.Models.AccountValidation;
 import com.juliano.app.repository.AccountValidationRepository;
 import com.juliano.app.repository.AccountsRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,12 +33,14 @@ class AccountServiceTest {
     @InjectMocks
     private AccountService acs;
 
+    @Disabled
     public void setup(){
         MockitoAnnotations.initMocks(this);
         // para mock em métodos privados é com powerMockito
         //acs = PowerMockito.spy(acs);
     }
 
+    @Disabled
     @Test
     void deveFazerNewAcc() {
         //when(accountsRepository.save(any(Account.class))).thenReturn(umaConta().agora());
@@ -52,14 +55,17 @@ class AccountServiceTest {
         assertEquals("teste@teste.com", a.getEmail());
     }
 
+    @Disabled
     @Test
     void getAcc() {
     }
 
+    @Disabled
     @Test
     void criarPersonagem() {
     }
 
+    @Disabled
     @Test
     void validarEmail() {
     }

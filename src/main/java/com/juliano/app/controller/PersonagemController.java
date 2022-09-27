@@ -40,10 +40,4 @@ public class PersonagemController {
 		return ResponseEntity.notFound().build();
 	}
 
-	@PatchMapping("/experience/{id}/{quantidade}")
-	@ApiParam(value = "auth token")
-	public ResponseEntity<Personagem> setExperience(@PathVariable Long id, @PathVariable int quantidade, @RequestHeader(value = "Authorization", required = true) String token){
-		if(!midleware.validateToken(token)) return ResponseEntity.status(401).build();
-		return psns.setNewExperience(id, quantidade);
-	}
 }

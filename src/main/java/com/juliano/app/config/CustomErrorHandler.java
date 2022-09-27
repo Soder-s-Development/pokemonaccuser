@@ -2,8 +2,6 @@ package com.juliano.app.config;
 
 import com.juliano.app.Models.Personagem;
 
-import lombok.var;
-
 public class CustomErrorHandler{
 
 	public RespostaPadrao contaNaoExistente(Personagem p){

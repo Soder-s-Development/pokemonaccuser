@@ -68,8 +68,7 @@ public class AccountService {
 		Personagem p = new Personagem();
 		p.setNome(nome);
 		p.setId_conta(id);
-		p.setHold_ids("");
-		p.setPkmu_ids("");
+		p.setPokemonIntoParty(1L);
 		return pr.save(p);
 	}
 
