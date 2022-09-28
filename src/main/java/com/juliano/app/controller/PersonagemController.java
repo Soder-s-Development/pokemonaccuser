@@ -3,6 +3,7 @@ package com.juliano.app.controller;
 import com.juliano.app.Models.Personagem;
 import com.juliano.app.config.Midleware;
 import com.juliano.app.repository.PersonagemRepository;
+import com.juliano.app.response.PersonagemResponse;
 import com.juliano.app.servie.PersonagemService;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
@@ -33,11 +34,9 @@ public class PersonagemController {
 	}
 	@GetMapping("/{id}")
 	@ApiParam(value = "auth token")
-	public ResponseEntity<Personagem> getPersonagem(@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token) {
+	public ResponseEntity<PersonagemResponse> getPersonagem(@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token) {
 		if(!midleware.validateToken(token)) return ResponseEntity.status(401).build();
-		var p = psnr.findById(id).orElse(null);
-		if (p != null) return ResponseEntity.ok(p);
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.ok(psns.getPersonagem(id));
 	}
 
 }
