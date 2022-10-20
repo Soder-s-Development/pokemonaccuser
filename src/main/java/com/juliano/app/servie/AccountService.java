@@ -43,7 +43,7 @@ public class AccountService {
 		if(a == null){
 			return null;
 		}
-		int cod = GerarCod.getRandonInt(9999);
+		int cod = GerarRandonNumber.getRandonInt(9999);
 		String s = "**Código de verificaçao: "+cod+" **";
 		JavaMailApp mail = new JavaMailApp();
 		Boolean b = mail.sendEmail(acc.getEmail(), s);

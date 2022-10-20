@@ -2,7 +2,7 @@ package com.juliano.app.servie;
 
 import java.util.Random;
 
-public interface GerarCod {
+public interface GerarRandonNumber {
 
     Random rand = new Random();
 
