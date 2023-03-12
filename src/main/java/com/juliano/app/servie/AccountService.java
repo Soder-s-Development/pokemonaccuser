@@ -3,11 +3,14 @@ package com.juliano.app.servie;
 import com.juliano.app.Models.AccountValidation;
 import com.juliano.app.repository.AccountValidationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.juliano.app.Models.Account;
 import com.juliano.app.Models.Personagem;
+import com.juliano.app.config.RespostaPadrao;
 import com.juliano.app.repository.AccountsRepository;
 import com.juliano.app.repository.PersonagemRepository;
 import com.juliano.app.servie.security.PasswordUtils;
@@ -30,7 +33,7 @@ public class AccountService {
 	@Autowired
 	private AccountValidationRepository acr;
 	
-	public Account newAcc(Account acc) {
+	public RespostaPadrao newAcc(Account acc) {
 		if(accr.findByEmail(acc.getEmail()) != null){
 			accr.deleteById(accr.findByEmail(acc.getEmail()).getId());
 		}
@@ -40,9 +43,11 @@ public class AccountService {
 		acc.setLevel(1);
 		acc.setActived(false);
 		Account a = accr.save(acc);
+		
 		if(a == null){
 			return null;
 		}
+		
 		int cod = GerarRandonNumber.getRandonInt(9999);
 		String s = "**Código de verificaçao: "+cod+" **";
 		JavaMailApp mail = new JavaMailApp();
@@ -55,7 +60,12 @@ public class AccountService {
 			accv.setAcc_id(a.getId());
 			acr.save(accv);
 		}
-		return a;
+		
+		return RespostaPadrao.builder().mensagem(b == true ? "Enviado email de confirmação para "+a.getEmail() : "Falha ao enviar email de confirmação").status(201).response(a).build();
+	}
+	
+	public RespostaPadrao findAllPageable(PageRequest pageable) {
+		return RespostaPadrao.builder().response(accr.findAll(pageable)).build();
 	}
 	
 	public ResponseEntity<Account> getAcc(Long id) {
