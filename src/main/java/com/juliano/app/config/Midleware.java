@@ -68,7 +68,7 @@ public class Midleware {
 
     @Data
     @Builder
-    public class IncomigJWTObject{
+    public static class IncomigJWTObject{
         private Long id;
         private String name;
         private String email;

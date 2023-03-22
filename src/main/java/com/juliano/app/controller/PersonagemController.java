@@ -33,13 +33,11 @@ public class PersonagemController {
 	@PostMapping
 	@ApiParam(value = "auth token")
 	public ResponseEntity<Object> createPersonagem(@RequestBody PersonagemRequest np, @RequestHeader(value = "Authorization", required = true) String token) throws AuthenticationException, RuntimeException {
-		if(!midleware.validateToken(token)) return midleware.tokenOk(token); 
 		return psns.saveNewPersonagem(np);
 	}
 	@GetMapping("/{id}")
 	@ApiParam(value = "auth token")
 	public ResponseEntity<Object> getPersonagem(@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token) throws NotFoundException {
-		if(!midleware.validateToken(token)) return ResponseEntity.status(401).build();
 		PersonagemResponse p = psns.getPersonagem(id);
 		return p != null ? ResponseEntity.ok(p) : ResponseEntity.status(404).body(naoEncontrado("Personagem não encontrado", p));
 	}
