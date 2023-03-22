@@ -1,8 +1,12 @@
 package com.juliano.app.servie;
 
 import com.juliano.app.Models.AccountValidation;
+import com.juliano.app.accdtos.LoginDTO;
+import com.juliano.app.config.Midleware;
+import com.juliano.app.config.RespostaPadrao;
 import com.juliano.app.repository.AccountValidationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,32 +18,38 @@ import com.juliano.app.servie.security.PasswordUtils;
 
 import lombok.AllArgsConstructor;
 
+import java.util.Optional;
+
+import static com.juliano.app.config.Utils.isNull;
+
 @Service
 @AllArgsConstructor
 public class AccountService {
 
 	@Autowired
-	private AccountsRepository accr;
+	private AccountsRepository accountsRepository;
 	
 	@Autowired
-	private PasswordUtils passu;
+	private PasswordUtils passwordUtils;
 	
 	@Autowired
-	private PersonagemRepository pr;
+	private PersonagemRepository personagemRepository;
 
 	@Autowired
-	private AccountValidationRepository acr;
+	private AccountValidationRepository accountValidationRepository;
 	
 	public Account newAcc(Account acc) {
-		if(accr.findByEmail(acc.getEmail()) != null){
-			accr.deleteById(accr.findByEmail(acc.getEmail()).getId());
+
+		if(accountsRepository.findByEmail(acc.getEmail()) != null) {
+			throw new IllegalStateException("Account already exists");
 		}
-		acc.setPassword(passu.generateSecurePassword(acc.getPassword(), "mypokemongame"));
+
+		acc.setPassword(passwordUtils.generateSecurePassword(acc.getPassword(), "mypokemongame"));
 		acc.setCoin(0);
 		acc.setSucoin(0);
 		acc.setLevel(1);
 		acc.setActived(false);
-		Account a = accr.save(acc);
+		Account a = accountsRepository.save(acc);
 		if(a == null){
 			return null;
 		}
@@ -53,13 +63,13 @@ public class AccountService {
 			accv.setEmail(a.getEmail());
 			accv.setCode(cod);
 			accv.setAcc_id(a.getId());
-			acr.save(accv);
+			accountValidationRepository.save(accv);
 		}
 		return a;
 	}
 	
 	public ResponseEntity<Account> getAcc(Long id) {
-		return accr.findById(id)
+		return accountsRepository.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
@@ -69,16 +79,16 @@ public class AccountService {
 		p.setNome(nome);
 		p.setId_conta(id);
 		p.setPokemonIntoParty(1L);
-		return pr.save(p);
+		return personagemRepository.save(p);
 	}
 
 	public ResponseEntity<Boolean> validarEmail(int cod){
-		AccountValidation a = acr.findByCode(cod);
+		AccountValidation a = accountValidationRepository.findByCode(cod);
 		if(a != null){
-			Account ac = accr.findByEmail(a.getEmail());
+			Account ac = accountsRepository.findByEmail(a.getEmail());
 			ac.setActived(true);
-			accr.save(ac);
-			acr.delete(a);
+			accountsRepository.save(ac);
+			accountValidationRepository.delete(a);
 			return ResponseEntity.ok().body(true);
 		}
 		return ResponseEntity.ok().body(false);
@@ -86,17 +96,17 @@ public class AccountService {
 
 	public int subirDeNivel(Long id) {
 		Account a = this.buscarConta(id);
-		if(!checkNull(a)) return -1;
+		if(!isNull(a)) return -1;
 		a.setLevel(a.getLevel()+1);
-		accr.save(a);
+		accountsRepository.save(a);
 		return a.getLevel();
 	}
 	public Account buscarConta(Long id){
-		return accr.findById(id).map(account ->  account).orElse(null);
+		return accountsRepository.findById(id).map(account ->  account).orElse(null);
 	}
 	public ResponseEntity<Integer> salvarExperiencia(Long id, int quantidade){
 		Account a = this.buscarConta(id);
-		if(checkNull(a)){
+		if(isNull(a)){
 			ResponseEntity.notFound().build();
 		}
 		a.setExperience(quantidade);
@@ -104,14 +114,16 @@ public class AccountService {
 		if(calc>1){
 			subirDeNivel(id);
 		}
-		accr.save(a);
+		accountsRepository.save(a);
 		return ResponseEntity.ok(a.getLevel());
 	}
-
-	private boolean checkNull(Account a) {
-		if( a == null){
-			return true;
+    public ResponseEntity login(LoginDTO login) {
+		Account acc = accountsRepository.findByEmail(login.getUsername());
+		if(acc==null){
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespostaPadrao.builder()
+					.status(401).mensagem("Not found account for that email address").build());
 		}
-		return false;
-	}
+		return ResponseEntity.ok(RespostaPadrao.builder().status(200).mensagem("Access succeed")
+				.response(Midleware.genereteJWT(acc)));
+    }
 }
