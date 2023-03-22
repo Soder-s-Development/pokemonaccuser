@@ -15,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.UUID;
 
+
 @Service
 public class Midleware {
+	private final static String token = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
     private final static String key = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
 
     static Algorithm algorithm = Algorithm.HMAC256(key);

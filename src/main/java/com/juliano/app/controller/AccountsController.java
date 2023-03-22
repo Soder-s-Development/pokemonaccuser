@@ -1,25 +1,25 @@
 package com.juliano.app.controller;
 
-import javax.servlet.ServletRequest;
-import javax.validation.Valid;
-
+import com.juliano.app.Models.Account;
+import com.juliano.app.Models.Personagem;
 import com.juliano.app.accdtos.LoginDTO;
+import com.juliano.app.builder.PageableBuilder;
 import com.juliano.app.config.Midleware;
+import com.juliano.app.config.RespostaPadrao;
+import com.juliano.app.servie.AccountService;
 import io.swagger.annotations.ApiImplicitParam;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.juliano.app.Models.Account;
-import com.juliano.app.Models.Personagem;
-import com.juliano.app.servie.AccountService;
-
-import lombok.AllArgsConstructor;
+import javax.servlet.ServletRequest;
+import javax.validation.Valid;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/account")
-@CrossOrigin(origins = {"*", "x-requested-with", "content-type"}, originPatterns = "*")
+@CrossOrigin(origins = { "*", "x-requested-with", "content-type" }, originPatterns = "*")
 public class AccountsController {
 
 	@Autowired
@@ -27,39 +27,48 @@ public class AccountsController {
 
 	@Autowired
 	private Midleware midleware;
-	
-	@PostMapping
-	public Account createAccount(@Valid @RequestBody Account acc) {return accs.newAcc(acc);}
+
+	@PostMapping("/create")
+	public RespostaPadrao createAccount(@Valid @RequestBody Account acc) {
+		return accs.newAcc(acc);
+	}
+
 	@GetMapping("/{id}")
 	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public ResponseEntity<Account> getAccount(@PathVariable Long id, ServletRequest servletRequest) {
-		return midleware.getTokenEValidate(servletRequest) ? accs.getAcc(id) : ResponseEntity.status(401).build();
+		return accs.getAcc(id);
 	}
+
+	@GetMapping("/all")
+	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
+	public ResponseEntity<RespostaPadrao> findAllAccount(@RequestBody PageableBuilder pageable, ServletRequest servletRequest) {
+		return ResponseEntity.ok(accs.findAllPageable(pageable.buildPage()));
+	}
+
 	@PostMapping("/{id}/{nome}")
 	public ResponseEntity<Personagem> criarPersonagem(@PathVariable String nome, @PathVariable Long id, ServletRequest servletRequest){
-		return midleware.getTokenEValidate(servletRequest) ? ResponseEntity.ok(accs.criarPersonagem(id, nome)) : ResponseEntity.status(401).build();
+		return ResponseEntity.ok(accs.criarPersonagem(id, nome));
 	}
+
 	@PostMapping("/validate/{code}")
 	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public ResponseEntity<Boolean> activeAcc(@PathVariable int code, ServletRequest servletRequest){
-
-		return midleware.getTokenEValidate(servletRequest) ? accs.validarEmail(code) : ResponseEntity.badRequest()
-				.body(false);
+		return accs.validarEmail(code);
 	}
 
 	@PatchMapping("/levelUP/{id}")
 	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public int subirContaDeNivel(@PathVariable Long id, ServletRequest servletRequest){
-		return midleware.getTokenEValidate(servletRequest) ? accs.subirDeNivel(id) : -1;
+		return accs.subirDeNivel(id);
 	}
+
 	@PatchMapping("/experience/{id}/{quantidade}")
 	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public ResponseEntity<Integer> adicionarExperiencia(@PathVariable Long id, @PathVariable int quantidade, ServletRequest servletRequest){
-		return midleware.getTokenEValidate(servletRequest) ? accs.salvarExperiencia(id, quantidade) : ResponseEntity.status(401).build();
+		return accs.salvarExperiencia(id, quantidade);
 	}
 
-	PostMapping("/login")
-	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
+	@PostMapping("/login")
 	public  ResponseEntity doLogin(@RequestBody @Valid LoginDTO login){
 		return accs.login(login);
 	}

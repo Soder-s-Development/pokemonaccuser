@@ -18,9 +18,10 @@ import org.springframework.stereotype.Service;
 
 import com.juliano.app.Models.Account;
 import com.juliano.app.Models.Personagem;
-import com.juliano.app.config.CustomErrorHandler;
+import com.juliano.app.config.CustomResponse;
 import com.juliano.app.repository.PersonagemRepository;
 import com.juliano.app.repository.PokemonUnicoRepository;
+import com.juliano.app.request.PersonagemRequest;
 import com.juliano.app.response.PersonagemResponse;
 
 @Service
@@ -32,29 +33,33 @@ public class PersonagemService {
     @Autowired
     PokemonUnicoRepository repository;
 
-    public ResponseEntity<Object> saveNewPersonagem(Personagem p) {
+    public ResponseEntity<Object> saveNewPersonagem(PersonagemRequest p) {
     	ResponseEntity<Account> responseACC = accs.getAcc(p.getId_conta());
     	if(!(responseACC.getStatusCode() == HttpStatus.OK)) {
-    		return ResponseEntity.status(422).body(new CustomErrorHandler().contaNaoExistente(p));
+    		return ResponseEntity.status(422).body(new CustomResponse().contaNaoExistente(p));
     	}
     	if(nomeExisteNaBase(p.getNome())) {
-    		return ResponseEntity.status(422).body(new CustomErrorHandler().PersonagemNomeJaExiste(p));
+    		return ResponseEntity.status(422).body(new CustomResponse().personagemNomeJaExiste(p));
     	}
-    	p.setNivel(1);
-    	p.setExperiencia(0);
-    	return ResponseEntity.ok(pr.save(p));
+    	
+    	return ResponseEntity.ok(pr.save(Personagem.builder().nivel(1).experiencia(0).id_conta(p.getId_conta()).build()));
     }
     private boolean nomeExisteNaBase(String nome) {
     	return pr.findByNome(nome).size() > 0;
     }
     
-   public PersonagemResponse getPersonagem(Long id) throws EntityNotFoundException{
-	   Personagem personagem = Optional.ofNullable(pr.findById(id).get()).orElseThrow(() -> new EntityNotFoundException("Nao foi encontrado personagem com este id: "+id));
+   public PersonagemResponse getPersonagem(Long id) {
+	   Optional<Personagem> optionalPersonagem = pr.findById(id);
+	   if(!optionalPersonagem.isPresent()) {
+		   return null;
+	   }
+	   Personagem personagem = optionalPersonagem.get();
 	   List<PokemonUnico> pokemons = new ArrayList<>();
 	   personagem.getHolds().forEach(
 			   	idPokemon -> { 
 			   		try {
-						pokemons.add(Optional.ofNullable(repository.findById(idPokemon).get()).orElseThrow(() -> new EntityNotFoundException("Nao foi encontrado pokemon com este id: "+idPokemon)));
+			   			Optional<PokemonUnico> p = repository.findById(idPokemon);
+						if(p.isPresent()) {pokemons.add(p.get());}
 					} catch (EntityNotFoundException e) {
 						e.printStackTrace();
 					} 

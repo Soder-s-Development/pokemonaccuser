@@ -2,6 +2,7 @@ package com.juliano.app.servie;
 
 import com.juliano.app.Models.Account;
 import com.juliano.app.Models.AccountValidation;
+import com.juliano.app.config.RespostaPadrao;
 import com.juliano.app.repository.AccountValidationRepository;
 import com.juliano.app.repository.AccountsRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,7 +51,8 @@ class AccountServiceTest {
         // com o Mockito doReturn ele salva o retorno primeiro e não percorre o método
         doReturn(umaConta().agora()).when(accountsRepository).save(any(Account.class));
         doReturn(new AccountValidation()).when(acvr).save(any(AccountValidation.class));
-        Account a = acs.newAcc(umaConta().agora());
+        RespostaPadrao respostaPadrao = acs.newAcc(umaConta().agora());
+        Account a = (Account) respostaPadrao.getResponse();
         verify(accountsRepository).save(umaConta().agora());
         assertEquals("teste@teste.com", a.getEmail());
     }

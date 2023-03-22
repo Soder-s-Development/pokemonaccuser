@@ -1,14 +1,18 @@
 package com.juliano.app.controller;
 
-import com.juliano.app.Models.Personagem;
+import static com.juliano.app.config.CustomResponse.naoEncontrado;
+
+import javax.naming.AuthenticationException;
 import com.juliano.app.config.Midleware;
 import com.juliano.app.repository.PersonagemRepository;
+import com.juliano.app.request.PersonagemRequest;
 import com.juliano.app.response.PersonagemResponse;
 import com.juliano.app.servie.PersonagemService;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,15 +32,16 @@ public class PersonagemController {
 
 	@PostMapping
 	@ApiParam(value = "auth token")
-	public ResponseEntity<Object> createPersonagem(@RequestBody Personagem np, @RequestHeader(value = "Authorization", required = true) String token) {
-		if(!midleware.validateToken(token)) return ResponseEntity.status(401).build();
+	public ResponseEntity<Object> createPersonagem(@RequestBody PersonagemRequest np, @RequestHeader(value = "Authorization", required = true) String token) throws AuthenticationException, RuntimeException {
+		if(!midleware.validateToken(token)) return midleware.tokenOk(token); 
 		return psns.saveNewPersonagem(np);
 	}
 	@GetMapping("/{id}")
 	@ApiParam(value = "auth token")
-	public ResponseEntity<PersonagemResponse> getPersonagem(@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token) {
+	public ResponseEntity<Object> getPersonagem(@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token) throws NotFoundException {
 		if(!midleware.validateToken(token)) return ResponseEntity.status(401).build();
-		return ResponseEntity.ok(psns.getPersonagem(id));
+		PersonagemResponse p = psns.getPersonagem(id);
+		return p != null ? ResponseEntity.ok(p) : ResponseEntity.status(404).body(naoEncontrado("Personagem não encontrado", p));
 	}
 
 }
