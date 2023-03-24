@@ -9,6 +9,8 @@ import com.juliano.app.Models.Account;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
@@ -18,24 +20,22 @@ import java.util.UUID;
 
 
 @Service
-@AllArgsConstructor
 public class Midleware {
-	private final static String token = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
     private final static String key = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
 
     static Algorithm algorithm = Algorithm.HMAC256(key);
 
-    JWTVerifier verifier = JWT.require(algorithm)
+    static JWTVerifier verifier = JWT.require(algorithm)
             .withIssuer(key)
             .build();
 
-    public IncomigJWTObject getTokenEValidate(ServletRequest servletRequest){
+    public static IncomigJWTObject getTokenEValidate(ServletRequest servletRequest){
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String authorization = req.getHeader("Authorization");
         System.out.println("Authorization: " + authorization);
         return validateToken(authorization.split("Bearer ")[1]);
     }
-    private IncomigJWTObject validateToken(String bearer){
+    private static IncomigJWTObject validateToken(String bearer){
         return validJWT(bearer);
     }
 
@@ -53,7 +53,7 @@ public class Midleware {
                 .sign(algorithm);
     }
 
-    public IncomigJWTObject validJWT(String token){
+    public static IncomigJWTObject validJWT(String token){
         try {
             DecodedJWT decodedJWT = verifier.verify(token);
 

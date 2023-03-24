@@ -35,10 +35,18 @@ public class AccountService {
 	@Autowired
 	private AccountValidationRepository accountValidationRepository;
 	
+	/***
+	 * Procura a conta e se ela existir e ainda nao tiver ativada ela vai pro espaco
+	 * se tiver ativada estoura uma excecao
+	 */
 	public RespostaPadrao newAcc(Account acc) {
 
-		if(accountsRepository.findByEmail(acc.getEmail()) != null) {
+		Account account = accountsRepository.findByEmail(acc.getEmail());
+		
+		if(account != null && account.isActived()) {
 			throw new IllegalStateException("Account already exists");
+		}else if(account != null && account.isActived() == false) {
+			accountsRepository.delete(account);
 		}
 
 		acc.setPassword(passwordUtils.generateSecurePassword(acc.getPassword(), "mypokemongame"));
