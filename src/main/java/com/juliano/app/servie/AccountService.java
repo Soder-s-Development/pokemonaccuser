@@ -81,7 +81,8 @@ public class AccountService {
 		Personagem p = new Personagem();
 		p.setNome(nome);
 		p.setId_conta(id);
-		p.setPokemonIntoParty(1L);
+		p.setExperiencia(0);
+		p.setNivel(1);
 		return personagemRepository.save(p);
 	}
 
@@ -127,6 +128,6 @@ public class AccountService {
 					.status(401).mensagem("Not found account for that email address").build());
 		}
 		return ResponseEntity.ok(RespostaPadrao.builder().status(200).mensagem("Access succeed")
-				.response(Midleware.genereteJWT(acc)));
+				.response(Midleware.genereteJWT(acc)).build());
     }
 }

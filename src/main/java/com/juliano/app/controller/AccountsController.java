@@ -10,6 +10,7 @@ import com.juliano.app.servie.AccountService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,7 +69,7 @@ public class AccountsController {
 		return accs.salvarExperiencia(id, quantidade);
 	}
 
-	@PostMapping("/login")
+	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public  ResponseEntity doLogin(@RequestBody @Valid LoginDTO login){
 		return accs.login(login);
 	}

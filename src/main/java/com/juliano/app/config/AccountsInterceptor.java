@@ -23,8 +23,10 @@ public class AccountsInterceptor implements HandlerInterceptor {
         Midleware.IncomigJWTObject jwtObject = midleware.getTokenEValidate(requestServlet);
         if(isNull(jwtObject)){
             // throw exception and catch it with a controller advice todo
+            System.out.println("[INTERCEPTOR]: Not passed");
             return false;
         }
+        System.out.println("[INTERCEPTOR]: Continue");
         return true;
     }
 }

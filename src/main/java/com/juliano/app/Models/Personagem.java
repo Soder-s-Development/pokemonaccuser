@@ -56,9 +56,11 @@ public class Personagem {
 	@Nullable
 	@Transient
 	private Set<Long> _ids = new HashSet();
-    
+
+	@Column(name="level")
     private Integer nivel;
-    
+
+	@Column(name="experience")
     private Integer experiencia;
 	
 	public int getPartyLength() {

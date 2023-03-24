@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.juliano.app.Models.Account;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 
 @Service
+@AllArgsConstructor
 public class Midleware {
 	private final static String token = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
     private final static String key = "cG9rZW1vbldvcmxkSnVsaWFub1NvZGVy";
@@ -30,6 +32,7 @@ public class Midleware {
     public IncomigJWTObject getTokenEValidate(ServletRequest servletRequest){
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         String authorization = req.getHeader("Authorization");
+        System.out.println("Authorization: " + authorization);
         return validateToken(authorization.split("Bearer ")[1]);
     }
     private IncomigJWTObject validateToken(String bearer){

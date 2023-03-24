@@ -12,9 +12,9 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class LoginDTO {
 
-    @NotEmpty
-    private String username;
     @Email
+    private String username;
+    @NotEmpty
     private String password;
 
 }
