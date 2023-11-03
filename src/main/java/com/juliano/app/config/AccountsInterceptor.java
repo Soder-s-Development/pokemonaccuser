@@ -1,31 +1,38 @@
 package com.juliano.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.juliano.app.config.Utils.isNull;
 
+@Component
 public class AccountsInterceptor implements HandlerInterceptor {
-    // can make a post handler as well
-
+    @Autowired
     Midleware midleware;
+
+    private String[] whitelist = {"/swagger", "/v2/api-docs", "/error", "/csrf"};
 
     @Override
     public boolean preHandle(HttpServletRequest requestServlet, HttpServletResponse responseServlet, Object handler) throws Exception
     {
-        System.out.println("LOG: INTERCEPTOR PREHANDLE CALLED");
+        if(isSwaggerRequest(requestServlet)){
+            return true;
+        }
+
+        System.out.println("LOG: INTERCEPTOR PREHANDLE CALLED WHIT REQUEST "+requestServlet.getRequestURI());
+
         Midleware.IncomigJWTObject jwtObject = midleware.getTokenEValidate(requestServlet);
         if(isNull(jwtObject)){
-            // throw exception and catch it with a controller advice todo
             System.out.println("[INTERCEPTOR]: Not passed");
             throw new CustomNotAllowedException("Token not valid");
-            //return false;
         }
         System.out.println("[INTERCEPTOR]: Continue");
         return true;
@@ -41,6 +48,11 @@ public class AccountsInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, 
        Object handler, Exception exception) throws Exception {
     	System.out.println("[INTERCEPTOR]: Running in after completion");
+    }
+
+    private boolean isSwaggerRequest(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return Arrays.asList(whitelist).contains(requestURI) || requestURI.equals("/");
     }
 
 }
