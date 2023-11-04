@@ -6,16 +6,22 @@ import com.juliano.app.Models.Personagem;
 import com.juliano.app.accdtos.LoginDTO;
 import com.juliano.app.config.Midleware;
 import com.juliano.app.config.RespostaPadrao;
+import com.juliano.app.exceptions.CustomNotFoundException;
 import com.juliano.app.repository.AccountValidationRepository;
 import com.juliano.app.repository.AccountsRepository;
 import com.juliano.app.repository.PersonagemRepository;
 import com.juliano.app.servie.security.PasswordUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+
+import java.io.FileNotFoundException;
+import java.util.Optional;
 
 import static com.juliano.app.config.Utils.isNull;
 
@@ -34,7 +40,7 @@ public class AccountService {
 
 	@Autowired
 	private AccountValidationRepository accountValidationRepository;
-	
+
 	/***
 	 * Procura a conta e se ela existir e ainda nao tiver ativada ela vai pro espaco
 	 * se tiver ativada estoura uma excecao
@@ -94,16 +100,14 @@ public class AccountService {
 		return personagemRepository.save(p);
 	}
 
-	public ResponseEntity<Boolean> validarEmail(int cod){
-		AccountValidation a = accountValidationRepository.findByCode(cod);
-		if(a != null){
-			Account ac = accountsRepository.findByEmail(a.getEmail());
-			ac.setActived(true);
-			accountsRepository.save(ac);
-			accountValidationRepository.delete(a);
-			return ResponseEntity.ok().body(true);
-		}
-		return ResponseEntity.ok().body(false);
+	public ResponseEntity<RespostaPadrao> validarEmail(int cod) throws CustomNotFoundException {
+		AccountValidation a = Optional.ofNullable(accountValidationRepository.findByCode(cod)).orElseThrow(() -> new CustomNotFoundException("Código inválido"));
+
+		Account ac = accountsRepository.findByEmail(a.getEmail());
+		ac.setActived(true);
+		accountsRepository.save(ac);
+		accountValidationRepository.delete(a);
+		return ResponseEntity.ok().body(RespostaPadrao.builder().response(ac).status(200).mensagem("Conta ativada com sucesso").build());
 	}
 
 	public int subirDeNivel(Long id) {

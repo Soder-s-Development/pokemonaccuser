@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.juliano.app.exceptions.CustomNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(RespostaPadrao.builder().mensagem("SQL Exception occurred: " + e.getMessage()).status(500).build());
         }
+    }
+
+    @ExceptionHandler(CustomNotFoundException.class)
+    public ResponseEntity<RespostaPadrao> handleCustomNotFoundException(CustomNotFoundException e) {
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespostaPadrao.builder().mensagem(e.getMessage()).status(404).build());
     }
     
 }

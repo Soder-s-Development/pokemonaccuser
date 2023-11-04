@@ -5,6 +5,7 @@ import com.juliano.app.Models.Personagem;
 import com.juliano.app.accdtos.LoginDTO;
 import com.juliano.app.builder.PageableBuilder;
 import com.juliano.app.config.RespostaPadrao;
+import com.juliano.app.exceptions.CustomNotFoundException;
 import com.juliano.app.servie.AccountService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.AllArgsConstructor;
@@ -48,8 +49,7 @@ public class AccountsController {
 	}
 
 	@PostMapping("/validate/{code}")
-	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
-	public ResponseEntity<Boolean> activeAcc(@PathVariable int code, ServletRequest servletRequest){
+	public ResponseEntity<RespostaPadrao> activeAcc(@PathVariable int code, ServletRequest servletRequest) throws CustomNotFoundException {
 		return accountService.validarEmail(code);
 	}
 
