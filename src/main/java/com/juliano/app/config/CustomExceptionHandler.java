@@ -1,5 +1,6 @@
 package com.juliano.app.config;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,15 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         		.mensagem(ex.getMessage())
         		.status(401).response(ex.toString()).build(), HttpStatus.UNAUTHORIZED);
 
-    	
     }
-    
+
+    @ExceptionHandler(SQLException.class)
+    public ResponseEntity<RespostaPadrao> handleSQLException(SQLException e) {
+        if (e.getSQLState().equals("42S02")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespostaPadrao.builder().mensagem("Table does not exist.").status(404).build());
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(RespostaPadrao.builder().mensagem("SQL Exception occurred: " + e.getMessage()).status(500).build());
+        }
+    }
     
 }
