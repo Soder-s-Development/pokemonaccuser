@@ -20,7 +20,6 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/account")
-@CrossOrigin(origins = { "*", "x-requested-with", "content-type" }, originPatterns = "*")
 public class AccountsController {
 
 	@Autowired
@@ -37,7 +36,7 @@ public class AccountsController {
 		return accountService.getAcc(id);
 	}
 
-	@GetMapping("/all")
+	@PostMapping("/all")
 	@ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	public ResponseEntity<RespostaPadrao> findAllAccount(@RequestBody PageableBuilder pageable, ServletRequest servletRequest) {
 		return ResponseEntity.ok(accountService.findAllPageable(pageable.buildPage()));

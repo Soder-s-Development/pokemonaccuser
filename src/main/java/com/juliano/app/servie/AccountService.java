@@ -142,4 +142,8 @@ public class AccountService {
 		return ResponseEntity.ok(RespostaPadrao.builder().status(200).mensagem("Access succeed")
 				.response(Midleware.genereteJWT(acc)).build());
     }
+
+	public Long buscarIdDaContaPeloEmail(String email) {
+		return accountsRepository.findAccountIdByEmail(email);
+	}
 }

@@ -10,6 +10,7 @@ import com.juliano.app.Models.PokemonUnico;
 import javax.persistence.EntityNotFoundException;
 import javax.security.auth.login.AccountNotFoundException;
 
+import com.juliano.app.config.RespostaPadrao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -72,5 +73,9 @@ public class PersonagemService {
 			   .nome(personagem.getNome())
 			   .holds(Set.copyOf(pokemons))
 			   .build();
+   }
+
+   public ResponseEntity<RespostaPadrao> buscarTodosPersonagens(String email) {
+		return ResponseEntity.ok(RespostaPadrao.builder().response(pr.findAllById_conta(accs.buscarIdDaContaPeloEmail(email))).build());
    }
 }

@@ -35,21 +35,27 @@ public class Midleware {
         System.out.println("Authorization: " + authorization);
         return validateToken(authorization.split("Bearer ")[1]);
     }
+
+    public static IncomigJWTObject getTokenEValidate(String authorization){
+        System.out.println("Authorization: " + authorization);
+        return validateToken(authorization.split("Bearer ")[1]);
+    }
+
     private static IncomigJWTObject validateToken(String bearer){
         return validJWT(bearer);
     }
 
     public static String genereteJWT(Account acc){
         return JWT.create()
-                .withIssuer("PokemonAccs")
+                .withIssuer(key)
                 .withSubject("Account token")
                 .withClaim("userId", acc.getId().toString())
                 .withClaim("name", acc.getFirst_name())
                 .withClaim("email", acc.getEmail())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 5000L))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 50000L))
                 .withJWTId(UUID.randomUUID().toString())
-                .withNotBefore(new Date(System.currentTimeMillis() + 1000L))
+                .withNotBefore(new Date(System.currentTimeMillis() + 10000L))
                 .sign(algorithm);
     }
 

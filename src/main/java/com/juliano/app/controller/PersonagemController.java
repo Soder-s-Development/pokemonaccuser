@@ -4,6 +4,8 @@ import static com.juliano.app.config.CustomResponse.naoEncontrado;
 
 import javax.naming.AuthenticationException;
 import com.juliano.app.config.Midleware;
+import com.juliano.app.config.RespostaPadrao;
+import com.juliano.app.exceptions.CustomNotAllowedException;
 import com.juliano.app.repository.PersonagemRepository;
 import com.juliano.app.request.PersonagemRequest;
 import com.juliano.app.response.PersonagemResponse;
@@ -16,30 +18,36 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("personagem")
 @AllArgsConstructor
-@CrossOrigin(origins = {"*", "x-requested-with", "content-type"}, originPatterns = "*")
 public class PersonagemController {
- //@CrossOrigin(origins = {"http://localhost", "http://127.0.0.1", "http://0.0.0.0", "x-requested-with", "content-type"},
-	@Autowired
-	private PersonagemRepository psnr;
 
 	@Autowired
-	private PersonagemService psns;
-
-	private Midleware midleware;
+	private PersonagemService personagemService;
 
 	@PostMapping
 	@ApiParam(value = "auth token")
 	public ResponseEntity<Object> createPersonagem(@RequestBody PersonagemRequest np, @RequestHeader(value = "Authorization", required = true) String token) throws AuthenticationException, RuntimeException {
-		return psns.saveNewPersonagem(np);
+		return personagemService.saveNewPersonagem(np);
 	}
 	@GetMapping("/{id}")
 	@ApiParam(value = "auth token")
 	public ResponseEntity<Object> getPersonagem(@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token) throws NotFoundException {
-		PersonagemResponse p = psns.getPersonagem(id);
+		PersonagemResponse p = personagemService.getPersonagem(id);
 		return p != null ? ResponseEntity.ok(p) : ResponseEntity.status(404).body(naoEncontrado("Personagem não encontrado", p));
+	}
+
+	@GetMapping("/all")
+	@ApiParam(value = "auth token")
+	public ResponseEntity<RespostaPadrao> buscarTodosPersonagens(@RequestHeader(value = "Authorization", required = true) String token) throws CustomNotAllowedException {
+		var t = Midleware.getTokenEValidate(token);
+		if (t == null || t.getEmail().isEmpty()) {
+			throw new CustomNotAllowedException("Necessário um e-mail válido");
+		}
+		return personagemService.buscarTodosPersonagens(t.getEmail());
 	}
 
 }

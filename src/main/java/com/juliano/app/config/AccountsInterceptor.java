@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import static com.juliano.app.config.Utils.isNull;
@@ -26,10 +27,8 @@ public class AccountsInterceptor implements HandlerInterceptor {
         if(isSwaggerRequest(requestServlet)){
             return true;
         }
-
-        System.out.println("LOG: INTERCEPTOR PREHANDLE CALLED WHIT REQUEST "+requestServlet.getRequestURI());
-
-        Midleware.IncomigJWTObject jwtObject = midleware.getTokenEValidate(requestServlet);
+        String authorization = requestServlet.getHeader("Authorization");
+        Midleware.IncomigJWTObject jwtObject = Midleware.getTokenEValidate(authorization);
         if(isNull(jwtObject)){
             System.out.println("[INTERCEPTOR]: Not passed");
             throw new CustomNotAllowedException("Token not valid");
@@ -41,13 +40,13 @@ public class AccountsInterceptor implements HandlerInterceptor {
     public void postHandle(
        HttpServletRequest request, HttpServletResponse response, Object handler, 
        ModelAndView modelAndView) throws Exception {
-    	System.out.println("[INTERCEPTOR]: Running in posthandle");
+    	//System.out.println("[INTERCEPTOR]: Running in posthandle");
     }
     
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, 
        Object handler, Exception exception) throws Exception {
-    	System.out.println("[INTERCEPTOR]: Running in after completion");
+    	//System.out.println("[INTERCEPTOR]: Running in after completion");
     }
 
     private boolean isSwaggerRequest(HttpServletRequest request) {

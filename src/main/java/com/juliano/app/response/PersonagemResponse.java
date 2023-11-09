@@ -17,7 +17,7 @@ import lombok.Setter;
 @Builder
 public class PersonagemResponse {
 	
-private Long id;
+	private Long id;
 	
 	private Long id_conta;
 	
