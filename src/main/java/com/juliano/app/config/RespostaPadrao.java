@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -20,5 +22,7 @@ public class RespostaPadrao {
 	private int status;
 	
 	private Object response;
+
+	private List<String> errors;
 		
 }

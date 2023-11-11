@@ -1,6 +1,7 @@
 package com.juliano.app.config;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,24 +19,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomExceptionHandler {
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
-
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList());
-        
-        return new ResponseEntity<>(RespostaPadrao.builder()
-        		.mensagem("handleMethodArgumentNotValid")
-        		.status(Integer.parseInt(status.toString())).response(errors).build(), status);
-    }
-    
     @ExceptionHandler({CustomNotAllowedException.class})
     public ResponseEntity<Object> customNotAllowedException(CustomNotAllowedException ex){
     	
@@ -59,5 +45,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RespostaPadrao> handleCustomNotFoundException(CustomNotFoundException e) {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespostaPadrao.builder().mensagem(e.getMessage()).status(404).build());
     }
-    
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
+        return ResponseEntity.badRequest().body(RespostaPadrao.builder().status(400).errors(getErrorListFromException(ex)).mensagem("Requisição inválida").build());
+    }
+
+    private List<String> getErrorListFromException(MethodArgumentNotValidException ex) {
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        List<String> errorMessages = new ArrayList<>();
+        for (FieldError fieldError : fieldErrors) {
+            errorMessages.add(fieldError.getDefaultMessage());
+        }
+        return  errorMessages;
+    }
+
 }

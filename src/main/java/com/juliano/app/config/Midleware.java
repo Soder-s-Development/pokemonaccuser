@@ -53,9 +53,9 @@ public class Midleware {
                 .withClaim("name", acc.getFirst_name())
                 .withClaim("email", acc.getEmail())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 50000L))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 3600000L))
                 .withJWTId(UUID.randomUUID().toString())
-                .withNotBefore(new Date(System.currentTimeMillis() + 10000L))
+                .withNotBefore(new Date(System.currentTimeMillis() + 1000L))
                 .sign(algorithm);
     }
 
@@ -64,7 +64,7 @@ public class Midleware {
             DecodedJWT decodedJWT = verifier.verify(token);
 
             return IncomigJWTObject.builder()
-                    .id(decodedJWT.getClaim("userId").asLong())
+                    .id(Long.parseLong(decodedJWT.getClaim("userId").asString()))
                     .name(decodedJWT.getClaim("name").asString())
                     .email(decodedJWT.getClaim("email").asString())
                     .build();

@@ -28,6 +28,10 @@ public class AccountsInterceptor implements HandlerInterceptor {
             return true;
         }
         String authorization = requestServlet.getHeader("Authorization");
+        if(isNull(authorization)){
+            System.out.println("[INTERCEPTOR]: Not passed");
+            return false;
+        }
         Midleware.IncomigJWTObject jwtObject = Midleware.getTokenEValidate(authorization);
         if(isNull(jwtObject)){
             System.out.println("[INTERCEPTOR]: Not passed");

@@ -8,11 +8,9 @@ import java.util.Set;
 import com.juliano.app.Models.PokemonUnico;
 
 import javax.persistence.EntityNotFoundException;
-import javax.security.auth.login.AccountNotFoundException;
 
 import com.juliano.app.config.RespostaPadrao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,14 +26,14 @@ import com.juliano.app.response.PersonagemResponse;
 @Service
 public class PersonagemService {
     @Autowired
-    PersonagemRepository pr;
+    PersonagemRepository personagemRepository;
     @Autowired
-    AccountService accs;
+    AccountService accountService;
     @Autowired
     PokemonUnicoRepository repository;
 
     public ResponseEntity<Object> saveNewPersonagem(PersonagemRequest p) {
-    	ResponseEntity<Account> responseACC = accs.getAcc(p.getId_conta());
+    	ResponseEntity<Account> responseACC = accountService.getAcc(p.getId_conta());
     	if(!(responseACC.getStatusCode() == HttpStatus.OK)) {
     		return ResponseEntity.status(422).body(new CustomResponse().contaNaoExistente(p));
     	}
@@ -43,14 +41,14 @@ public class PersonagemService {
     		return ResponseEntity.status(422).body(new CustomResponse().personagemNomeJaExiste(p));
     	}
     	
-    	return ResponseEntity.ok(pr.save(Personagem.builder().nivel(1).experiencia(0).id_conta(p.getId_conta()).build()));
+    	return ResponseEntity.ok(personagemRepository.save(Personagem.builder().nome(p.getNome()).nivel(1).experiencia(0).id_conta(p.getId_conta()).build()));
     }
     private boolean nomeExisteNaBase(String nome) {
-    	return pr.findByNome(nome).size() > 0;
+    	return personagemRepository.findByNome(nome).size() > 0;
     }
     
    public PersonagemResponse getPersonagem(Long id) {
-	   Optional<Personagem> optionalPersonagem = pr.findById(id);
+	   Optional<Personagem> optionalPersonagem = personagemRepository.findById(id);
 	   if(!optionalPersonagem.isPresent()) {
 		   return null;
 	   }
@@ -76,6 +74,6 @@ public class PersonagemService {
    }
 
    public ResponseEntity<RespostaPadrao> buscarTodosPersonagens(String email) {
-		return ResponseEntity.ok(RespostaPadrao.builder().response(pr.findAllById_conta(accs.buscarIdDaContaPeloEmail(email))).build());
+		return ResponseEntity.ok(RespostaPadrao.builder().response(personagemRepository.findAllById_conta(accountService.buscarIdDaContaPeloEmail(email))).build());
    }
 }

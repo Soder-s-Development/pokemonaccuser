@@ -31,6 +31,8 @@ public class PersonagemController {
 	@PostMapping
 	@ApiParam(value = "auth token")
 	public ResponseEntity<Object> createPersonagem(@RequestBody PersonagemRequest np, @RequestHeader(value = "Authorization", required = true) String token) throws AuthenticationException, RuntimeException {
+		var t = Midleware.getTokenEValidate(token);
+		np.setId_conta(t.getId());
 		return personagemService.saveNewPersonagem(np);
 	}
 	@GetMapping("/{id}")
