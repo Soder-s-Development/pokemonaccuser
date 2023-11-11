@@ -4,18 +4,18 @@ Este é um serviço de contas para usuários de jogos.
 
 Tecnologias utilizadas
 
-Java 11
-Spring Boot 2.6.6
-Spring Data JDBC
-Spring Data JPA
-Spring Validation
-Spring Web
-MySQL Connector Java
-Lombok
-Flyway Core 5.2.4
-JavaMail API 1.6.2
-Swagger 2.9.2
-Java JWT 4.3.0
+* Java 11
+* Spring Boot 2.6.6
+* Spring Data JDBC
+* Spring Data JPA
+* Spring Validation
+* Spring Web
+* MySQL Connector Java
+* Lombok
+* Flyway Core 5.2.4
+* JavaMail API 1.6.2
+* Swagger 2.9.2
+* Java JWT 4.3.0
 
 Pré-requisitos
 
